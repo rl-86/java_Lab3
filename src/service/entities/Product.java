@@ -1,5 +1,5 @@
 package service.entities;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Product {
 
@@ -9,16 +9,16 @@ public class Product {
     private String name;
     private String category;
     private int rating;
-    private final LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private final LocalDate createdAt;
+    private LocalDate updatedAt;
 
-    public Product(int id, String name, String category, int rating, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Product(int id, String name, String category, int rating, LocalDate createdAt, LocalDate updatedAt) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.rating = rating;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = createdAt;
+        this.updatedAt = LocalDate.now();
     }
 
     public int getId() {
@@ -33,10 +33,10 @@ public class Product {
     public int getRating() {
         return rating;
     }
-    public LocalDateTime getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
-    public LocalDateTime getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
@@ -49,13 +49,13 @@ public class Product {
     public void setRating(int rating) {
         this.rating = rating;
     }
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @Override
     public String toString() {
-        return id + "\t" +
-                 name + "\t\t" + category + "\t\t\t" + rating +  "\t\t" +createdAt +  "\t\t" +updatedAt +"\n";
+        return id + "\t\t" +
+                 name + "\t\t\t\t" + category + "\t\t\t\t" + rating +  "\t\t\t\t" +createdAt +  "\t\t\t\t" +updatedAt;
     }
 }

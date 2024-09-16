@@ -1,16 +1,19 @@
 package service;
 import service.entities.Product;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class Warehouse {
 
     public static Scanner sc = new Scanner(System.in);
-    public static String goBack = ("\nTryck \"Enter\" för att gå till huvudmenyn");
+    public static String goBack = ("\nPush \"Enter\" to go back to main menu");
 
     private List<Product> products = new ArrayList<>();
+    private static int nextId = 1;
 
     public List<Product> getProducts() {
         return new ArrayList<>(products);
@@ -27,17 +30,24 @@ public class Warehouse {
 
         Warehouse Warehouse = new Warehouse();
 
-        Product banana = new Product(1, "Banana", "Fruit", 5, null, null);
-        Product apple = new Product(2, "Apple", "Fruit", 4, null, null);
-        Product orange = new Product(3, "Orange", "Fruit", 3, null, null);
-        Product pear = new Product(4, "Pear", "Fruit", 2, null, null);
-        Product lemon = new Product(5, "Lemon", "Fruit", 1, null, null);
+        Stream.of(
+            new Product(nextId++, "Bread", "Food", 4, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Milk", "Food", 5, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Butter", "Food", 3, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Cheese", "Food", 4, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Apple", "Food", 5, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Banana", "Food", 4, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Table", "Furniture", 3, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Chair", "Furniture", 4, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Sofa", "Furniture", 5, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Screwdriver", "Tools", 4, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Hammer", "Tools", 5, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Saw", "Tools", 4, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Drill", "Tools", 5, LocalDate.of(2024, 9, 12), null),
+            new Product(nextId++, "Screw", "Tools", 4, LocalDate.of(2024, 9, 12), null)
+        ).forEach(Warehouse::addProduct);
 
-        Warehouse.addProduct(banana);
-        Warehouse.addProduct(apple);
-        Warehouse.addProduct(orange);
-        Warehouse.addProduct(pear);
-        Warehouse.addProduct(lemon);
+
 
         String choice;
         do {
@@ -48,8 +58,8 @@ public class Warehouse {
             System.out.println("2. Remove product");
             System.out.println("3. Show all products");
             System.out.println("4. ");
-            System.out.println("e. Avsluta");
-            System.out.println("\nAnge menyval + enter:");
+            System.out.println("e. Exit");
+            System.out.println("\nMenu option + enter:");
 
 
             choice = sc.nextLine();
@@ -57,7 +67,30 @@ public class Warehouse {
             switch (choice) {
 
                 case "1":
-                    Warehouse.getProducts();
+                    String name = "";
+                    String category;
+                    int rating = 0;
+                    System.out.println("Add new product");
+                    while (name.isBlank()){
+                        System.out.println("Enter product name:");
+                        name = sc.nextLine();
+                        if (name.isBlank()){
+                            System.out.println("Name can't be empty, try again!");
+                        }
+                    }
+                    System.out.println("Enter product category:");
+                    category = sc.nextLine();
+                    if (category.isBlank()){
+                        category = "Unknown";
+                    }
+                    System.out.println("Enter product rating (0-10):");
+                    rating = sc.nextInt();
+                    if (rating < 0 || rating > 10){
+                        rating = 0;
+                    }
+                    sc.nextLine();
+                    Warehouse.products.add(new Product(nextId++, name, category, rating, LocalDate.now(), LocalDate.now()));
+                    System.out.println(name+" was successfully added");
                     System.out.println(goBack);
                     sc.nextLine();
                     break;
@@ -67,8 +100,9 @@ public class Warehouse {
 
                 case "3":
                     System.out.println("All products:\n");
-                    System.out.println("id\tName\t\tCategory\t\tRating\tCreated at\t\tUpdated at");
-                    System.out.println(Warehouse.getProducts());
+                    System.out.println("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
+                    Warehouse.getProducts().forEach(System.out::println);
+                    System.out.println(goBack);
                     sc.nextLine();
                     break;
 
