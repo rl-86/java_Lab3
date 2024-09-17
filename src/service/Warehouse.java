@@ -10,7 +10,7 @@ public class Warehouse {
 
     public static Scanner sc = new Scanner(System.in);
     public static String index = ("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
-    public static String goBack = ("\nPush \"Enter\" to go back to main menu");
+    public static String goBack = ("\nPress \"Enter\" to go back to main menu");
 
     private static List<Product> products = new ArrayList<>();
     private static int nextId = 1;
@@ -89,6 +89,35 @@ public class Warehouse {
         }
     }
 
+    // Case 6 Show all new products
+    public static List<Product> getProductsCreatedAfter(LocalDate date) {
+        return products.stream()
+                .filter(product -> product.getCreatedAt().isAfter(date))
+                .collect(Collectors.toList());
+    }
+    public static void displayProductsCreatedAfter() {
+        System.out.println("Find products created after a specific date");
+        System.out.println("Enter the date (yyyy-mm-dd) to find products created after:");
+        String inputDate = sc.nextLine();
+        LocalDate date;
+
+        try {
+            date = LocalDate.parse(inputDate);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-mm-dd.");
+            return;
+        }
+        System.out.println(index);
+        List<Product> productsCreatedAfter = getProductsCreatedAfter(date);
+
+        if (productsCreatedAfter.isEmpty()) {
+            System.out.println("No products found created after " + date);
+        } else {
+            productsCreatedAfter.forEach(System.out::println);
+        }
+        System.out.println(goBack);
+        sc.nextLine();
+    }
 
 
 
@@ -97,20 +126,20 @@ public class Warehouse {
         Warehouse Warehouse = new Warehouse();
 
         Stream.of(
-                new Product(nextId++, "Bread",Product.Category.FOOD, 4,LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Milk", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Butter", Product.Category.FOOD, 3, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Cheese", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Apple", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Banana", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Table", Product.Category.FURNITURE, 3, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Chair", Product.Category.FURNITURE, 4, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Sofa", Product.Category.FURNITURE, 5, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Screwdriver", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Hammer", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Saw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Drill", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12), null),
-                new Product(nextId++, "Screw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), null)
+                new Product(nextId++, "Bread",Product.Category.FOOD, 4,LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Milk", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Butter", Product.Category.FOOD, 3, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Cheese", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Apple", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Banana", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Table", Product.Category.FURNITURE, 3, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Chair", Product.Category.FURNITURE, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Sofa", Product.Category.FURNITURE, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Screwdriver", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Hammer", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Saw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Drill", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Screw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12))
         ).forEach(Warehouse::addProduct);
 
 
@@ -124,10 +153,10 @@ public class Warehouse {
             System.out.println("3. Remove product");
             System.out.println("4. Show all products");
             System.out.println("5. Sort by category");
-            System.out.println("6. Show all new products");
+            System.out.println("6. Find products by date");
             System.out.println("7. Show all modified products");
             System.out.println("e. Exit");
-            System.out.println("\nMenu option + enter:");
+            System.out.println("\nMenu option + \"Enter\"");
 
 
             choice = sc.nextLine();
@@ -284,7 +313,7 @@ public class Warehouse {
                     break;
 
                 case "6":
-
+                    displayProductsCreatedAfter();
 
 
 
