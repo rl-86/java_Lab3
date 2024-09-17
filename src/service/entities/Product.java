@@ -3,16 +3,18 @@ import java.time.LocalDate;
 
 public class Product {
 
-
+    public enum Category {
+        FOOD, FURNITURE, TOOLS, OTHER
+    }
 
     private final int id;
     private String name;
-    private String category;
+    private Category category;
     private int rating;
     private final LocalDate createdAt;
     private LocalDate updatedAt;
 
-    public Product(int id, String name, String category, int rating, LocalDate createdAt, LocalDate updatedAt) {
+    public Product(int id, String name, Category category, int rating, LocalDate createdAt, LocalDate updatedAt) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -27,7 +29,7 @@ public class Product {
     public String getName() {
         return name;
     }
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
     public int getRating() {
@@ -43,7 +45,7 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
     public void setRating(int rating) {
