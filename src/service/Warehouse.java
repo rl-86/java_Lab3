@@ -56,6 +56,7 @@ public class Warehouse {
     }
     // Case "5"  Method to display products by category
     public static void displayProductsByCategory() {
+        System.out.println("Display products by category");
         System.out.println("Choose a category: 1. FOOD, 2. FURNITURE, 3. TOOLS or \"Enter\" for OTHER");
         String choice = sc.nextLine();
 
@@ -79,7 +80,7 @@ public class Warehouse {
         List<Product> sortedProducts = products.stream()
                 .filter(product -> product.getCategory() == category)
                 .sorted(Comparator.comparing(Product::getName))
-                .collect(Collectors.toList());
+                .toList();
 
         if (sortedProducts.isEmpty()) {
             System.out.println("No products found in the selected category.");
@@ -87,6 +88,8 @@ public class Warehouse {
             System.out.println(index);
             sortedProducts.forEach(System.out::println);
         }
+        System.out.println(goBack);
+        sc.nextLine();
     }
 
     // Case 6 Show all new products
@@ -120,26 +123,47 @@ public class Warehouse {
     }
 
 
+    // Case 7 Show all modified products
+    public static List<Product> getProductsModifiedAfterCreation() {
+        return products.stream()
+                .filter(product -> !product.getCreatedAt().equals(product.getUpdatedAt()))
+                .collect(Collectors.toList());
+    }
+    public static void displayModifiedProducts() {
+
+        List<Product> modifiedProducts = getProductsModifiedAfterCreation();
+        System.out.println("Products modified after creation:");
+        if (modifiedProducts.isEmpty()) {
+            System.out.println("No products have been modified since they were created.");
+        } else {
+            System.out.println(index);
+            modifiedProducts.forEach(System.out::println);
+        }
+        System.out.println(goBack);
+        sc.nextLine();
+    }
+
+
 
     public static void main(String[] args) {
 
         Warehouse Warehouse = new Warehouse();
 
         Stream.of(
-                new Product(nextId++, "Bread",Product.Category.FOOD, 4,LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Milk", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Butter", Product.Category.FOOD, 3, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Cheese", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Apple", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Banana", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Table", Product.Category.FURNITURE, 3, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Chair", Product.Category.FURNITURE, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Sofa", Product.Category.FURNITURE, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Screwdriver", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Hammer", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Saw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Drill", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12)),
-                new Product(nextId++, "Screw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12), LocalDate.of(2024, 9, 12))
+                new Product(nextId++, "Bread",Product.Category.FOOD, 4,LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Milk", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Butter", Product.Category.FOOD, 3, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Cheese", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Apple", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Banana", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Table", Product.Category.FURNITURE, 3, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Chair", Product.Category.FURNITURE, 4, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Sofa", Product.Category.FURNITURE, 5, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Screwdriver", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Hammer", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Saw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Drill", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12)),
+                new Product(nextId++, "Screw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12))
         ).forEach(Warehouse::addProduct);
 
 
@@ -210,7 +234,7 @@ public class Warehouse {
                     }
                     // New product added
                     sc.nextLine();
-                    Warehouse.products.add(new Product(nextId++, name, category, rating, LocalDate.now(), LocalDate.now()));
+                    Warehouse.products.add(new Product(nextId++, name, category, rating, LocalDate.now()));
                     System.out.println(name+" was successfully added");
                     System.out.println(goBack);
                     sc.nextLine();
@@ -306,25 +330,15 @@ public class Warehouse {
                     break;
 
                 case "5":
-                    System.out.println("Display products by category");
                     displayProductsByCategory();
-                    System.out.println(goBack);
-                    sc.nextLine();
                     break;
 
                 case "6":
                     displayProductsCreatedAfter();
-
-
-
                     break;
 
                 case "7":
-
-
-
-
-
+                    displayModifiedProducts();
                     break;
 
 

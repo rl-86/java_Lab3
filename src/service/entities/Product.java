@@ -14,13 +14,13 @@ public class Product {
     private final LocalDate createdAt;
     private LocalDate updatedAt;
 
-    public Product(int id, String name, Category category, int rating, LocalDate createdAt, LocalDate updatedAt) {
+    public Product(int id, String name, Category category, int rating, LocalDate createdAt) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.rating = rating;
         this.createdAt = createdAt;
-        this.updatedAt = LocalDate.now();
+        this.updatedAt = createdAt;
     }
 
     public int getId() {
@@ -43,16 +43,24 @@ public class Product {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (!this.name.equals(name)) {
+            this.name = name;
+            this.updatedAt = LocalDate.now();
+        }
     }
+
     public void setCategory(Category category) {
-        this.category = category;
+        if (this.category != category) {
+            this.category = category;
+            this.updatedAt = LocalDate.now();
+        }
     }
+
     public void setRating(int rating) {
-        this.rating = rating;
-    }
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
+        if (this.rating != rating) {
+            this.rating = rating;
+            this.updatedAt = LocalDate.now();
+        }
     }
 
     @Override
