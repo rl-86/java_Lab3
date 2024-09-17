@@ -1,19 +1,18 @@
 package service;
 import service.entities.Product;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Warehouse {
 
     public static Scanner sc = new Scanner(System.in);
+    public static String index = ("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
     public static String goBack = ("\nPush \"Enter\" to go back to main menu");
 
-    private List<Product> products = new ArrayList<>();
+    private static List<Product> products = new ArrayList<>();
     private static int nextId = 1;
 
     // Get a copy of the products list
@@ -55,6 +54,43 @@ public class Warehouse {
 
         return false;
     }
+    // Case "5"  Method to display products by category
+    public static void displayProductsByCategory() {
+        System.out.println("Choose a category: 1. FOOD, 2. FURNITURE, 3. TOOLS or \"Enter\" for OTHER");
+        String choice = sc.nextLine();
+
+        Product.Category category;
+
+        switch (choice) {
+            case "1":
+                category = Product.Category.FOOD;
+                break;
+            case "2":
+                category = Product.Category.FURNITURE;
+                break;
+            case "3":
+                category = Product.Category.TOOLS;
+                break;
+            default:
+                category = Product.Category.OTHER;
+        }
+
+
+        List<Product> sortedProducts = products.stream()
+                .filter(product -> product.getCategory() == category)
+                .sorted(Comparator.comparing(Product::getName))
+                .collect(Collectors.toList());
+
+        if (sortedProducts.isEmpty()) {
+            System.out.println("No products found in the selected category.");
+        } else {
+            System.out.println(index);
+            sortedProducts.forEach(System.out::println);
+        }
+    }
+
+
+
 
     public static void main(String[] args) {
 
@@ -81,13 +117,15 @@ public class Warehouse {
         String choice;
         do {
             //Main menu
-            System.out.println("\nWarehouse");
+            System.out.println("\nThe Warehouse");
             System.out.println("========");
             System.out.println("1. Add product");
             System.out.println("2. Modify product");
             System.out.println("3. Remove product");
             System.out.println("4. Show all products");
-            System.out.println("5. ");
+            System.out.println("5. Sort by category");
+            System.out.println("6. Show all new products");
+            System.out.println("7. Show all modified products");
             System.out.println("e. Exit");
             System.out.println("\nMenu option + enter:");
 
@@ -155,7 +193,7 @@ public class Warehouse {
                     System.out.println("Modify product by id:");
                     modifyId = sc.nextInt();
                     sc.nextLine();
-                    System.out.println("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
+                    System.out.println(index);
                     System.out.println(Warehouse.getProductById(modifyId));
                     System.out.println("What do you want to modify?");
                     System.out.println("1. Name, 2. Category, 3. Rating");
@@ -232,11 +270,34 @@ public class Warehouse {
                 case "4":
                     // List all products
                     System.out.println("All products:\n");
-                    System.out.println("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
+                    System.out.println(index);
                     Warehouse.getProducts().forEach(System.out::println);
                     System.out.println(goBack);
                     sc.nextLine();
                     break;
+
+                case "5":
+                    System.out.println("Display products by category");
+                    displayProductsByCategory();
+                    System.out.println(goBack);
+                    sc.nextLine();
+                    break;
+
+                case "6":
+
+
+
+
+                    break;
+
+                case "7":
+
+
+
+
+
+                    break;
+
 
                 default:
 
