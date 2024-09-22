@@ -1,4 +1,4 @@
-package service.entities;
+package entities;
 import java.time.LocalDate;
 
 public class Product {
@@ -7,7 +7,7 @@ public class Product {
         FOOD, FURNITURE, TOOLS, OTHER
     }
 
-    private final int id;
+    private int id;
     private String name;
     private Category category;
     private int rating;
@@ -61,6 +61,11 @@ public class Product {
             this.rating = rating;
             this.updatedAt = LocalDate.now();
         }
+    }
+
+    public void setId(int id) {
+        this.id = id;
+
     }
 
     @Override
