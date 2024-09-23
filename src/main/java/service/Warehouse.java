@@ -16,6 +16,10 @@ public class Warehouse {
 
     private final List<Product> products = new ArrayList<>();
     private static int nextId = 1;
+    // Reset nextId to 1 for testing
+    public void resetNextId() {
+        nextId = 1;
+    }
 
     public Product getProductByIdAsProduct(int id) {
         return products.stream()
