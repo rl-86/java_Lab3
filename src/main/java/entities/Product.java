@@ -65,12 +65,11 @@ public class Product {
 
     public void setId(int id) {
         this.id = id;
-
     }
 
     @Override
     public String toString() {
         return id + "\t\t" +
-                 name + "\t\t\t\t" + category + "\t\t\t\t" + rating +  "\t\t\t\t" +createdAt +  "\t\t\t\t" +updatedAt;
+                name + "\t\t\t\t" + category + "\t\t\t\t" + rating +  "\t\t\t\t" +createdAt +  "\t\t\t\t" +updatedAt;
     }
 }

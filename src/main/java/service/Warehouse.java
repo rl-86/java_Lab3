@@ -1,5 +1,7 @@
 package service;
+
 import entities.Product;
+import entities.ProductRecord;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -12,27 +14,52 @@ public class Warehouse {
     public static String index = ("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
     public static String goBack = ("\nPress \"Enter\" to go back to main menu");
 
-    private static final List<Product> products = new ArrayList<>();
+    private final List<Product> products = new ArrayList<>();
     private static int nextId = 1;
 
-    // Get a copy of the products list
-    public List<Product> getProducts() {
-        return new ArrayList<>(products);
-    }
-    // Add product
-    public void addProduct(Product product) {
-        products.add(product);
-        product.setId(nextId++);
-
-    }
-    // Find product by ID
-    public Product getProductById(int id) {
+    public Product getProductByIdAsProduct(int id) {
         return products.stream()
                 .filter(product -> product.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
 
+    // Get a copy of the products list as ProductRecords
+    public List<ProductRecord> getProducts() {
+        return products.stream()
+                .map(product -> new ProductRecord(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory(),
+                        product.getRating(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    // Add product
+    public void addProduct(Product product) {
+        if (product.getName() == null || product.getName().isBlank()) {
+            throw new IllegalArgumentException("Product name cannot be null or blank");
+        }
+        products.add(product);
+        product.setId(nextId++);
+    }
+
+    // Find product by ID
+    public ProductRecord getProductById(int id) {
+        return products.stream()
+                .filter(product -> product.getId() == id)
+                .map(product -> new ProductRecord(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory(),
+                        product.getRating(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()))
+                .findFirst()
+                .orElse(null);
+    }
 
     // Find product by id to remove
     public boolean removeProductById(int id) {
@@ -48,8 +75,9 @@ public class Warehouse {
 
         return false;
     }
+
     // Case "5"  Method to display products by category
-    public static void displayProductsByCategory() {
+    public void displayProductsByCategory() {
         System.out.println("Display products by category");
         System.out.println("Choose a category: 1. FOOD, 2. FURNITURE, 3. TOOLS or \"Enter\" for OTHER");
         String choice = sc.nextLine();
@@ -70,10 +98,16 @@ public class Warehouse {
                 category = Product.Category.OTHER;
         }
 
-
-        List<Product> sortedProducts = products.stream()
+        List<ProductRecord> sortedProducts = products.stream()
                 .filter(product -> product.getCategory() == category)
                 .sorted(Comparator.comparing(Product::getName))
+                .map(product -> new ProductRecord(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory(),
+                        product.getRating(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()))
                 .toList();
 
         if (sortedProducts.isEmpty()) {
@@ -87,12 +121,20 @@ public class Warehouse {
     }
 
     // Case 6 Show all new products
-    public static List<Product> getProductsCreatedAfter(LocalDate date) {
+    public List<ProductRecord> getProductsCreatedAfter(LocalDate date) {
         return products.stream()
                 .filter(product -> product.getCreatedAt().isAfter(date))
+                .map(product -> new ProductRecord(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory(),
+                        product.getRating(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()))
                 .collect(Collectors.toList());
     }
-    public static void displayProductsCreatedAfter() {
+
+    public void displayProductsCreatedAfter() {
         System.out.println("Find products created after a specific date");
         System.out.println("Enter the date (yyyy-mm-dd) to find products created after:");
         String inputDate = sc.nextLine();
@@ -105,7 +147,7 @@ public class Warehouse {
             return;
         }
         System.out.println(index);
-        List<Product> productsCreatedAfter = getProductsCreatedAfter(date);
+        List<ProductRecord> productsCreatedAfter = getProductsCreatedAfter(date);
 
         if (productsCreatedAfter.isEmpty()) {
             System.out.println("No products found created after " + date);
@@ -116,16 +158,22 @@ public class Warehouse {
         sc.nextLine();
     }
 
-
     // Case 7 Show all modified products
-    public static List<Product> getProductsModifiedAfterCreation() {
+    public List<ProductRecord> getProductsModifiedAfterCreation() {
         return products.stream()
                 .filter(product -> !product.getCreatedAt().equals(product.getUpdatedAt()))
+                .map(product -> new ProductRecord(
+                        product.getId(),
+                        product.getName(),
+                        product.getCategory(),
+                        product.getRating(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()))
                 .collect(Collectors.toList());
     }
-    public static void displayModifiedProducts() {
 
-        List<Product> modifiedProducts = getProductsModifiedAfterCreation();
+    public void displayModifiedProducts() {
+        List<ProductRecord> modifiedProducts = getProductsModifiedAfterCreation();
         System.out.println("Products modified after creation:");
         if (modifiedProducts.isEmpty()) {
             System.out.println("No products have been modified since they were created.");
@@ -137,14 +185,11 @@ public class Warehouse {
         sc.nextLine();
     }
 
-
-
     public static void main(String[] args) {
-
-        Warehouse Warehouse = new Warehouse();
+        Warehouse warehouse = new Warehouse();
 
         Stream.of(
-                new Product(0, "Bread",Product.Category.FOOD, 4,LocalDate.of(2024, 9, 12)),
+                new Product(0, "Bread", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12)),
                 new Product(0, "Milk", Product.Category.FOOD, 5, LocalDate.of(2024, 9, 12)),
                 new Product(0, "Butter", Product.Category.FOOD, 3, LocalDate.of(2024, 9, 12)),
                 new Product(0, "Cheese", Product.Category.FOOD, 4, LocalDate.of(2024, 9, 12)),
@@ -158,12 +203,11 @@ public class Warehouse {
                 new Product(0, "Saw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12)),
                 new Product(0, "Drill", Product.Category.TOOLS, 5, LocalDate.of(2024, 9, 12)),
                 new Product(0, "Screw", Product.Category.TOOLS, 4, LocalDate.of(2024, 9, 12))
-        ).forEach(Warehouse::addProduct);
-
+        ).forEach(warehouse::addProduct);
 
         String choice;
         do {
-            //Main menu
+            // Main menu
             System.out.println("\nThe Warehouse");
             System.out.println("========");
             System.out.println("1. Add product");
@@ -176,19 +220,17 @@ public class Warehouse {
             System.out.println("e. Exit");
             System.out.println("\nMenu option + \"Enter\"");
 
-
             choice = sc.nextLine();
 
             switch (choice) {
-
                 case "1":
                     // Enter name
                     String name = "";
                     System.out.println("Add new product");
-                    while (name.isBlank()){
+                    while (name.isBlank()) {
                         System.out.println("Enter product name:");
                         name = sc.nextLine();
-                        if (name.isBlank()){
+                        if (name.isBlank()) {
                             System.out.println("Name can't be empty, try again!");
                         }
                     }
@@ -228,8 +270,8 @@ public class Warehouse {
                     }
                     // New product added
                     sc.nextLine();
-                    products.add(new Product(nextId++, name, category, rating, LocalDate.now()));
-                    System.out.println(name+" was successfully added");
+                    warehouse.addProduct(new Product(0, name, category, rating, LocalDate.now()));
+                    System.out.println(name + " was successfully added");
                     System.out.println(goBack);
                     sc.nextLine();
                     break;
@@ -237,25 +279,33 @@ public class Warehouse {
                 case "2":
                     // Modify product by id
                     int modifyId;
-                    System.out.println("Modify product by id:");
+                    System.out.println("Enter the id of the product you want to modify:");
                     modifyId = sc.nextInt();
                     sc.nextLine();
+                    Product productToModify = warehouse.getProductByIdAsProduct(modifyId);
+                    if (productToModify == null) {
+                        System.out.println("Product with id " + modifyId + " not found");
+                        System.out.println(goBack);
+                        sc.nextLine();
+                        break;
+                    }
                     System.out.println(index);
-                    System.out.println(Warehouse.getProductById(modifyId));
-                    System.out.println("What do you want to modify?");
+                    System.out.println(warehouse.getProductById(modifyId));
+
+                    System.out.println("\nWhat do you want to modify?");
                     System.out.println("1. Name, 2. Category, 3. Rating");
                     String modifyChoice = sc.nextLine();
-                    switch (modifyChoice){
+                    switch (modifyChoice) {
                         case "1":
                             String newName = "";
-                            while (newName.isBlank()){
+                            while (newName.isBlank()) {
                                 System.out.println("Enter the new product name:");
-                               newName = sc.nextLine();
-                                if (newName.isBlank()){
+                                newName = sc.nextLine();
+                                if (newName.isBlank()) {
                                     System.out.println("Name can't be empty, try again!");
                                 }
                             }
-                            Warehouse.getProductById(modifyId).setName(newName);
+                            productToModify.setName(newName);
                             System.out.println("Name was successfully updated");
                             break;
                         case "2":
@@ -275,7 +325,7 @@ public class Warehouse {
                                 default:
                                     category1 = Product.Category.OTHER;
                             }
-                            Warehouse.getProductById(modifyId).setCategory(category1);
+                            productToModify.setCategory(category1);
                             System.out.println("Category was successfully updated");
                             break;
                         case "3":
@@ -294,8 +344,9 @@ public class Warehouse {
                                     sc.next();
                                 }
                             }
-                            Warehouse.getProductById(modifyId).setRating(newRating);
+                            productToModify.setRating(newRating);
                             System.out.println("Rating was successfully updated");
+                            sc.nextLine();
                             break;
                         default:
                             System.out.println("Invalid input");
@@ -308,8 +359,8 @@ public class Warehouse {
                     System.out.print("Remove product by id: ");
                     removeId = sc.nextInt();
                     sc.nextLine();
-                    Warehouse.removeProductById(removeId);
-                    System.out.println("Product with id "+removeId+" was successfully removed");
+                    warehouse.removeProductById(removeId);
+                    System.out.println("Product with id " + removeId + " was successfully removed");
                     System.out.println(goBack);
                     sc.nextLine();
                     break;
@@ -318,31 +369,27 @@ public class Warehouse {
                     // List all products
                     System.out.println("All products:\n");
                     System.out.println(index);
-                    Warehouse.getProducts().forEach(System.out::println);
+                    warehouse.getProducts().forEach(System.out::println);
                     System.out.println(goBack);
                     sc.nextLine();
                     break;
 
                 case "5":
-                    displayProductsByCategory();
+                    warehouse.displayProductsByCategory();
                     break;
 
                 case "6":
-                    displayProductsCreatedAfter();
+                    warehouse.displayProductsCreatedAfter();
                     break;
 
                 case "7":
-                    displayModifiedProducts();
+                    warehouse.displayModifiedProducts();
                     break;
 
-
                 default:
-
             }
         } while (!choice.equalsIgnoreCase("e"));
 
         System.out.println("Avslutar...");
-
-
     }
 }
