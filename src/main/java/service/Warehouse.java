@@ -243,19 +243,12 @@ public class Warehouse {
                     System.out.println("Enter product category, Choose from: 1. Food, 2. Furniture, 3. Tools or press Enter for \"Other\"");
                     String input = sc.nextLine();
 
-                    switch (input) {
-                        case "1":
-                            category = Product.Category.FOOD;
-                            break;
-                        case "2":
-                            category = Product.Category.FURNITURE;
-                            break;
-                        case "3":
-                            category = Product.Category.TOOLS;
-                            break;
-                        default:
-                            category = Product.Category.OTHER;
-                    }
+                    category = switch (input) {
+                        case "1" -> Product.Category.FOOD;
+                        case "2" -> Product.Category.FURNITURE;
+                        case "3" -> Product.Category.TOOLS;
+                        default -> Product.Category.OTHER;
+                    };
                     // Enter rating
                     int rating = -1;
                     while (rating < 0 || rating > 10) {
