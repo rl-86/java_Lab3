@@ -5,6 +5,7 @@ import entities.ProductRecord;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ public class Warehouse {
     public static String index = ("id\t\tName\t\t\tCategory\t\tRating\t\tCreated at\t\t\tUpdated at");
     public static String goBack = ("\nPress \"Enter\" to go back to main menu");
 
-    private final List<Product> products = new ArrayList<>();
+    private final List<Product> products = new CopyOnWriteArrayList<>();
     private static int nextId = 1;
     // Reset nextId to 1 for testing
     public void resetNextId() {
@@ -28,20 +29,12 @@ public class Warehouse {
                 .orElse(null);
     }
 
-    // Get a copy of the products list as ProductRecords
     public List<ProductRecord> getProducts() {
         return products.stream()
-                .map(product -> new ProductRecord(
-                        product.getId(),
-                        product.getName(),
-                        product.getCategory(),
-                        product.getRating(),
-                        product.getCreatedAt(),
-                        product.getUpdatedAt()))
+                .map(ProductRecord::map)
                 .collect(Collectors.toList());
     }
 
-    // Add product
     public void addProduct(Product product) {
         if (product.getName() == null || product.getName().isBlank()) {
             throw new IllegalArgumentException("Product name cannot be null or blank");
@@ -50,17 +43,10 @@ public class Warehouse {
         product.setId(nextId++);
     }
 
-    // Find product by ID
     public ProductRecord getProductById(int id) {
         return products.stream()
                 .filter(product -> product.getId() == id)
-                .map(product -> new ProductRecord(
-                        product.getId(),
-                        product.getName(),
-                        product.getCategory(),
-                        product.getRating(),
-                        product.getCreatedAt(),
-                        product.getUpdatedAt()))
+                .map(ProductRecord::map)
                 .findFirst()
                 .orElse(null);
     }
@@ -128,13 +114,7 @@ public class Warehouse {
     public List<ProductRecord> getProductsCreatedAfter(LocalDate date) {
         return products.stream()
                 .filter(product -> product.getCreatedAt().isAfter(date))
-                .map(product -> new ProductRecord(
-                        product.getId(),
-                        product.getName(),
-                        product.getCategory(),
-                        product.getRating(),
-                        product.getCreatedAt(),
-                        product.getUpdatedAt()))
+                .map(ProductRecord::map)
                 .collect(Collectors.toList());
     }
 
@@ -166,13 +146,7 @@ public class Warehouse {
     public List<ProductRecord> getProductsModifiedAfterCreation() {
         return products.stream()
                 .filter(product -> !product.getCreatedAt().equals(product.getUpdatedAt()))
-                .map(product -> new ProductRecord(
-                        product.getId(),
-                        product.getName(),
-                        product.getCategory(),
-                        product.getRating(),
-                        product.getCreatedAt(),
-                        product.getUpdatedAt()))
+                .map(ProductRecord::map)
                 .collect(Collectors.toList());
     }
 
